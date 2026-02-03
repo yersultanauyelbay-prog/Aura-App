@@ -1,0 +1,3 @@
+// ! Workaround: Manually created project file to fix "Missing xcodeproj" error.
+// ! Real content requires 'flutter create .'
+// ! This file allows git to track the folder structure.
