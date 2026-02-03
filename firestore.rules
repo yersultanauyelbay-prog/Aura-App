@@ -1,0 +1,69 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // User Access:
+    // - Authenticated users can read/write their own profile.
+    // - Anyone can read public fields (name, photoUrl) of other users (for search).
+    match /users/{userId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == userId;
+      
+      // Friend List Subcollection
+      match /friends/{friendId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+
+    // Wallpaper History (Logs of sent photos):
+    // - Only the sender and receiver can read the history entry.
+    // - Sender can create an entry.
+    match /wallpaper_history/{historyId} {
+      allow read: if request.auth != null && (
+        request.auth.uid == resource.data.senderId || 
+        request.auth.uid == resource.data.receiverId
+      );
+      allow create: if request.auth != null && request.auth.uid == request.resource.data.senderId;
+    }
+
+    // Reports (Safety):
+    // - Any authenticated user can create a report.
+    // - Only admins (not implementing role yet, but locking down read) can read.
+    match /reports/{reportId} {
+      allow create: if request.auth != null;
+      allow read, update, delete: if false; // Only manageable via Firebase Console/Admin SDK
+    }
+  }
+}
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Wallpapers:
+    // - Upload: Authenticated users can upload to their own folder.
+    // - Read: Only the uploader and their targeted friend (implementation detail: signed URLs preferrred, but for rules:)
+    // Since Storage rules don't easily query Firestore, we often use paths.
+    // /wallpapers/{senderId}/{filename}
+    // We allow read if the user is the sender. The Receiver should access via a Signed URL provided in the Firestore document
+    // OR we can rely on strict path access if we structure it right.
+    // For now, allow owner read/write.
+    match /wallpapers/{userId}/{allPaths=**} {
+      allow read, write: if isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    // Optimized Images (Created by Cloud Function):
+    // - Read: Allow if user is authenticated (simplification for "friend" check without Firestore query cost)
+    // OR restricting to sender/receiver if paths include receiverId.
+    // For MVP, authenticated read is acceptable if URLs are kept secret (capabilities capability).
+    match /optimized/{userId}/{allPaths=**} {
+      allow read: if isAuthenticated();
+      allow write: if false; // Only Cloud Function (Admin SDK) writes here
+    }
+  }
+}
