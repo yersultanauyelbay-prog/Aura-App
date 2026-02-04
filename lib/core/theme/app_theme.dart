@@ -61,8 +61,8 @@ class GlassmorphismTheme extends ThemeExtension<GlassmorphismTheme> {
   GlassmorphismTheme lerp(ThemeExtension<GlassmorphismTheme>? other, double t) {
     if (other is! GlassmorphismTheme) return this;
     return GlassmorphismTheme(
-      blur: double.lerp(blur, other.blur, t)!,
-      opacity: double.lerp(opacity, other.opacity, t)!,
+      blur: ui.lerpDouble(blur, other.blur, t)!,
+      opacity: ui.lerpDouble(opacity, other.opacity, t)!,
       borderColor: Color.lerp(borderColor, other.borderColor, t)!,
     );
   }
