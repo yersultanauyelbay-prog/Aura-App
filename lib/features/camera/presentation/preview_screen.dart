@@ -62,7 +62,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
       _isSaving = true;
     });
 
-    final success = await WallpaperService.saveWallpaper(widget.imagePath);
+    final success = await WallpaperService().saveWallpaper(widget.imagePath);
 
     if (mounted) {
       setState(() {
