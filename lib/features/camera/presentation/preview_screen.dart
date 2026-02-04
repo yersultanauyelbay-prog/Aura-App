@@ -1,4 +1,4 @@
-import 'dart:io';
+﻿import 'dart:io';
 import 'package:aura/features/wallpaper/wallpaper_service.dart';
 import 'package:flutter/material.dart';
 
@@ -43,7 +43,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
               icon: _isSaving 
                   ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2)) 
                   : const Icon(Icons.ios_share),
-              label: Text(_isSaving ? "Saving..." : "Сохранить для обоев"), // "Save for Wallpaper"
+              label: Text(_isSaving ? "Saving..." : "РЎРѕС…СЂР°РЅРёС‚СЊ РґР»СЏ РѕР±РѕРµРІ"), // "Save for Wallpaper"
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,
                 foregroundColor: Colors.black,
@@ -62,7 +62,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
       _isSaving = true;
     });
 
-    final success = await WallpaperService().saveWallpaper(widget.imagePath);
+    bool success = true; try { await WallpaperService().saveWallpaper(widget.imagePath); } catch (e) { success = false; }
 
     if (mounted) {
       setState(() {
@@ -78,3 +78,4 @@ class _PreviewScreenState extends State<PreviewScreen> {
     }
   }
 }
+
