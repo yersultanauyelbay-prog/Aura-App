@@ -1,9 +1,14 @@
+# Прямые ссылки на скрипты Flutter (исправляют ошибку undefined method)
+load File.join(File.dirname(File.realpath(__FILE__)), '..', '.flutter-plugins-dependencies')
+load File.join(File.dirname(File.realpath(__FILE__)), 'Generated.podspec')
+
 platform :ios, '15.0'
 
 target 'Runner' do
   use_frameworks!
   use_modular_headers!
 
+  # Эта функция теперь будет распознана
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end
 
