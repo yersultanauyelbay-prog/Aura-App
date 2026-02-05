@@ -1,10 +1,11 @@
+load File.join(File.dirname(File.realpath(__FILE__)), '..', '.flutter-plugins-dependencies')
+load File.join(File.dirname(File.realpath(__FILE__)), 'Generated.podspec')
+
 platform :ios, '15.0'
 
 target 'Runner' do
   use_frameworks!
   use_modular_headers!
-
-  # Эта команда сама найдет все зависимости Flutter в облаке
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end
 
